@@ -1,3 +1,4 @@
+# Includes the ctb-windows-x64 portable binaries artifact.
 # Builds the library and tools on Linux and Windows against the same GDAL
 # (conda-forge), then checks that both produce the same quantized-mesh tiles
 # from the same input. Compiling on both is not enough: the tiles must match.
