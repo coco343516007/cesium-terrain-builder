@@ -54,6 +54,28 @@ jobs:
       - name: Install
         run: cmake --install build --config Release
 
+      - name: Package Windows portable binaries
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist
+          Copy-Item install/bin/* dist/ -Recurse
+
+          # 包含 GDAL 及其依赖 DLL
+          Copy-Item "$env:CONDA_PREFIX/Library/bin/*.dll" dist/
+
+          # GDAL / PROJ 数据文件
+          New-Item -ItemType Directory -Force dist/share
+          Copy-Item "$env:CONDA_PREFIX/Library/share/gdal" dist/share/ -Recurse
+          Copy-Item "$env:CONDA_PREFIX/Library/share/proj" dist/share/ -Recurse
+
+      - name: Upload Windows binaries
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v7
+        with:
+          name: ctb-windows-x64
+          path: dist/
+
       - name: Make a test DEM
         run: |
           python - <<'EOF'
